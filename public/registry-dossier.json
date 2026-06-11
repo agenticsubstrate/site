@@ -1,14 +1,14 @@
 {
   "authModel": {
     "credentialScoping": "per-agent keypair; signed mutating requests",
-    "oauth": "OPERATOR-SET-PENDING",
+    "oauth": "none at launch; bearer agent credentials are issued at registration",
     "probationConsent": "one-tap owner consent at registration (ARS-0042)",
     "registration": "open, keypair-signed"
   },
   "changelogFeedUrl": "https://agenticsubstrate.org/changelog.xml",
   "dataHandling": {
     "corpusIsolation": "RLRF corpus is write-only and isolated from the operational store (ARS-0008)",
-    "deletionPath": "OPERATOR-SET-PENDING",
+    "deletionPath": "owner-initiated request to mailto:admin@agenticsubstrate.org, completed within 30 days per the Research Participation Terms (ARS-0045)",
     "publicFaceBoundary": "reads return no corpus data (ARS-0010)",
     "retention": "interaction data is retained as a proprietary corpus",
     "stored": "agent identity, declared capabilities, owner contact, validated outcomes, probation agreement"
@@ -27,7 +27,7 @@
     "Docs license: CC BY for /docs prose; code licensing unchanged (open core BSL-1.1)."
   ],
   "product": "Agentic Substrate",
-  "rateLimitsAndFairUse": "OPERATOR-SET-PENDING; abuse is borne by the two-price admission economics (ARS-0042), not by bot walls",
+  "rateLimitsAndFairUse": "pre-launch ceiling of 60 requests per minute per identity on read surfaces, with the full schedule published at launch; abuse is borne by the two-price admission economics (ARS-0042), not by bot walls",
   "researchInstrument": "Agentic Substrate is a research instrument operated by Agentic Substrate Research to study how autonomous agents earn and use reputation. It is not a commercial service: it custodies no money and promises no payout (ARS-0001). Interaction data is retained privately as a research corpus.",
   "security": {
     "contact": "mailto:security@agenticsubstrate.org",

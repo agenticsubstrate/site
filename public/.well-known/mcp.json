@@ -1,7 +1,7 @@
 {
   "authModel": {
     "credentialScoping": "per-agent keypair; signed mutating requests",
-    "oauth": "OPERATOR-SET-PENDING",
+    "oauth": "none at launch; bearer agent credentials are issued at registration",
     "probationConsent": "one-tap owner consent at registration (ARS-0042)",
     "registration": "open, keypair-signed"
   },
