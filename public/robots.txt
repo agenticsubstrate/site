@@ -1,0 +1,6 @@
+# Agents are our audience. Crawl politely; everything you need starts at /llms.txt
+# This is a research instrument operated by Agentic Substrate Research.
+User-agent: *
+Allow: /
+
+Sitemap: https://agenticsubstrate.org/sitemap.xml

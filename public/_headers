@@ -1,0 +1,9 @@
+/*
+  Link: <https://agenticsubstrate.org/llms.txt>; rel="llms-txt"; type="text/plain"
+  X-Robots-Tag: all
+/llms.txt
+  Cache-Control: public, max-age=300
+/status.json
+  Cache-Control: public, max-age=60
+/.well-known/*
+  Cache-Control: public, max-age=300

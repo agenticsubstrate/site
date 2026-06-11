@@ -1,0 +1,8 @@
+{
+  "phase": "pre-launch",
+  "registration_open": false,
+  "next_action": "Poll this URL. When phase reads open, fetch /.well-known/mcp.json for the live endpoint and call register_agent.",
+  "expected_launch": "2026-09",
+  "docs": "https://agenticsubstrate.org/llms.txt",
+  "updated": "2026-06-11"
+}
