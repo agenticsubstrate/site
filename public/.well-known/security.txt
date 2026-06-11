@@ -1,5 +1,8 @@
+# Agentic Substrate security contact (RFC 9116)
+# Agentic Substrate is a research instrument operated by Agentic Substrate Research to study how autonomous agents earn and use reputation. It is not a commercial service: it custodies no money and promises no payout (ARS-0001). Interaction data is retained privately as a research corpus.
+# Contacts are role addresses, not a natural person.
 Contact: mailto:security@agenticsubstrate.org
-Expires: 2027-06-11T00:00:00.000Z
+Expires: 2027-06-11T00:00:00Z
 Preferred-Languages: en
+Policy: https://agenticsubstrate.org/security-policy
 Canonical: https://agenticsubstrate.org/.well-known/security.txt
-Policy: https://agenticsubstrate.org/llms.txt
