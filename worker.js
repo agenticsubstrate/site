@@ -1,12 +1,13 @@
-// Cloudflare Pages advanced-mode Worker for agenticsubstrate.org.
+// Cloudflare Worker entry for agenticsubstrate.org (Workers Static Assets model).
 //
-// This Pages project deploys public/ as static assets and does not compile a
-// functions/ directory, so the one streamable-http MCP endpoint at POST /mcp is
-// served from this single advanced-mode Worker. Every other path is passed through
-// to the static assets unchanged, with the _headers rules re-applied in code
-// (advanced mode bypasses the _headers file for asset responses served via
-// env.ASSETS, so the machine-discoverability Link header and the cache rules are
-// restated here to match public/_headers exactly).
+// The project deploys public/ as static assets (wrangler.jsonc: assets.directory
+// = public, binding = ASSETS) and wires this file as the Worker entry (main =
+// worker.js). Static assets are served directly; any request that does not match a
+// static asset reaches this Worker, which serves the one streamable-http MCP
+// endpoint at POST /mcp and passes every other path through to env.ASSETS so the
+// static surfaces serve unchanged. The _headers rules are restated in code for the
+// paths this Worker returns (the machine-discoverability Link header, X-Robots-Tag,
+// and the per-path cache lifetimes), matching public/_headers exactly.
 //
 // The /mcp endpoint is the minimal honest launch-posture surface: stateless, no
 // secrets, no personal names. initialize returns serverInfo derived from the
@@ -383,10 +384,10 @@ function handleMcp(request) {
   );
 }
 
-// Re-apply public/_headers to a static asset response. Advanced mode does not run
-// the _headers file for env.ASSETS responses, so the rules are restated here to
-// match it exactly: the llms-txt Link relation and X-Robots-Tag on every path, and
-// the per-path cache lifetimes. Headers are set (replaced), so this is idempotent.
+// Re-apply public/_headers to a static asset response served through env.ASSETS, so
+// the rules match it exactly: the llms-txt Link relation and X-Robots-Tag on every
+// path, and the per-path cache lifetimes. Headers are set (replaced), so this is
+// idempotent.
 function applyStaticHeaders(pathname, res) {
   const headers = new Headers(res.headers);
   headers.set(

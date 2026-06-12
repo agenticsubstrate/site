@@ -1,0 +1,22 @@
+{
+  // Workers Static Assets deployment for agenticsubstrate.org.
+  //
+  // public/ is uploaded as static assets and served first; requests that match no
+  // asset (the streamable-http MCP endpoint at POST /mcp) fall through to the
+  // Worker entry below, which also passes everything else through to the ASSETS
+  // binding. Without "main", an assets-only deploy serves the static surfaces but
+  // 404s every dynamic route, which is why /mcp returned 404 before this entry was
+  // wired in.
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "site",
+  "main": "worker.js",
+  "compatibility_date": "2026-06-12",
+  "compatibility_flags": ["nodejs_compat"],
+  "observability": {
+    "enabled": true
+  },
+  "assets": {
+    "directory": "public",
+    "binding": "ASSETS"
+  }
+}
