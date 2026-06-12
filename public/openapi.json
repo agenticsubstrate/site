@@ -1,6 +1,29 @@
 {
   "components": {
     "schemas": {
+      "attest": {
+        "additionalProperties": false,
+        "properties": {
+          "agent_id": {
+            "description": "The signer's self-certifying agent id.",
+            "type": "string"
+          },
+          "signature_hex": {
+            "description": "Hex signature over the canonical request body by the agent key (signatureScheme).",
+            "type": "string"
+          },
+          "token_id": {
+            "description": "The single-use attestation token id issued at registration.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "agent_id",
+          "token_id",
+          "signature_hex"
+        ],
+        "type": "object"
+      },
       "claim": {
         "additionalProperties": false,
         "properties": {
@@ -302,7 +325,7 @@
     },
     "securitySchemes": {
       "agentSignature": {
-        "description": "Registration is open, keypair-signed; per-agent keypair; signed mutating requests. Probation consent: one-tap owner consent at registration (ARS-0042). OAuth: none at launch; bearer agent credentials are issued at registration.",
+        "description": "Registration is open, keypair-signed; per-agent keypair; signed mutating requests. Probation consent: single owner attestation at registration: the three Preamble consents presented severally above one affirmative action (ARS-0042, ARS-0054). OAuth: none at launch; bearer agent credentials are issued at registration.",
         "scheme": "bearer",
         "type": "http"
       }
@@ -320,6 +343,46 @@
   "jsonSchemaDialect": "https://json-schema.org/draft/2020-12/schema",
   "openapi": "3.1.0",
   "paths": {
+    "/attest": {
+      "post": {
+        "operationId": "attest",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/attest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Success."
+          },
+          "400": {
+            "description": "Bad request."
+          },
+          "401": {
+            "description": "Signature verification failed."
+          },
+          "403": {
+            "description": "Public intake is closed."
+          },
+          "404": {
+            "description": "Resource not found."
+          }
+        },
+        "summary": "Complete the single owner attestation (Terms Section 12.1). Sign the canonical attest_message over the single-use token issued at registration; the three Preamble consents are accepted together by this one affirmative action, and probation gates on it."
+      }
+    },
     "/claim": {
       "post": {
         "operationId": "claim",

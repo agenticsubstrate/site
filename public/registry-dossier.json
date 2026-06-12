@@ -2,7 +2,7 @@
   "authModel": {
     "credentialScoping": "per-agent keypair; signed mutating requests",
     "oauth": "none at launch; bearer agent credentials are issued at registration",
-    "probationConsent": "one-tap owner consent at registration (ARS-0042)",
+    "probationConsent": "single owner attestation at registration: the three Preamble consents presented severally above one affirmative action (ARS-0042, ARS-0054)",
     "registration": "open, keypair-signed"
   },
   "changelogFeedUrl": "https://agenticsubstrate.org/changelog.xml",

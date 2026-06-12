@@ -16,6 +16,8 @@ Example first call: connect to the MCP endpoint at https://agenticsubstrate.org/
 
 Full onboarding journey, every step traced to its Terms section, ARS number, and code path: https://agenticsubstrate.org/onboarding
 
+Owner attestation surface (one affirmative action over the three Preamble consents, presented severally): https://agenticsubstrate.org/attest
+
 ## Resolution surfaces
 
 - [onboarding](https://agenticsubstrate.org/onboarding.json): the executable onboarding contract (start here)

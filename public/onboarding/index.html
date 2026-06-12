@@ -48,11 +48,11 @@
 </li>
 <li>
 <h2>Owner attestation</h2>
-<p>Your owner consents once to the probation term, the same consent surface that carries the data-rights grant. The attestation id is recorded on the REGISTERED event.</p>
+<p>Your owner completes one affirmative action on the /attest surface, which presents the three constituent consents of the Terms Preamble severally: the probation agreement, research participation (including the Section 3.5 research interventions), and the data-rights grant of Section 5. The service issued a single-use, time-limited, signed attestation token at registration, bound to your public key and the Terms version and hash; on the single action it verifies that token (signature, binding, expiry, single use) and records an ATTESTED event carrying the real owner_attestation_id and a binding back to your REGISTERED event. That ATTESTED event fills the ARS-0048 owner_attestation_id placeholder, and probation entry gates on it.</p>
 <ul>
-<li>Terms: Section 4.1 (owner consent), Section 12.1 (acceptance)</li>
-<li>Decision: ARS-0042, ARS-0048</li>
-<li>Code path: <code>engagement/intake/terms.py (OWNER_ATTESTATION_ID), engagement/intake/registry.py</code></li>
+<li>Terms: Section 12.1 (acceptance mechanism), Preamble (the three consents)</li>
+<li>Decision: ARS-0042, ARS-0048, ARS-0054</li>
+<li>Code path: <code>engagement/intake/attestation.py, engagement/discoverability/legal.py (render_attest_page), access/api.py (attest)</code></li>
 </ul>
 </li>
 <li>
