@@ -1,24 +1,22 @@
-// Cloudflare Pages Function serving POST https://agenticsubstrate.org/mcp
+// Cloudflare Pages advanced-mode Worker for agenticsubstrate.org.
 //
-// Minimal honest streamable-http MCP endpoint for the Agentic Substrate research
-// instrument. It is stateless, holds no secrets, and names no natural person.
+// This Pages project deploys public/ as static assets and does not compile a
+// functions/ directory, so the one streamable-http MCP endpoint at POST /mcp is
+// served from this single advanced-mode Worker. Every other path is passed through
+// to the static assets unchanged, with the _headers rules re-applied in code
+// (advanced mode bypasses the _headers file for asset responses served via
+// env.ASSETS, so the machine-discoverability Link header and the cache rules are
+// restated here to match public/_headers exactly).
 //
-// What it answers:
-//   initialize  -> serverInfo derived from the published agent card
-//                  (.well-known/agent-card.json: name and version), capabilities
-//                  advertising tools, and the negotiated protocol version.
-//   tools/list  -> exactly the tool schemas published on the live machine surface
-//                  (.well-known/mcp.json), name + description + inputSchema each.
-//   tools/call  -> the documented launch-posture closed-intake error as a proper
-//                  JSON-RPC error, matching the onboarding.json error table
-//                  verbatim ("public intake is closed", httpStatus 403).
-//   ping        -> empty result (MCP liveness).
+// The /mcp endpoint is the minimal honest launch-posture surface: stateless, no
+// secrets, no personal names. initialize returns serverInfo derived from the
+// published agent card; tools/list returns exactly the tool schemas published on
+// .well-known/mcp.json; tools/call returns the documented closed-intake error,
+// verbatim from the onboarding.json error table, as a JSON-RPC error.
 //
-// SERVER_INFO and TOOLS below are a verbatim copy of the published surfaces. They
-// are hand-maintained preserved artifacts, not generated output: when the F9
-// surface generator changes agent-card.json or mcp.json, regenerate this copy so
-// the endpoint never drifts from what the surfaces advertise. The deploy pipeline
-// preserves this file the same way it preserves _headers (ops/deploy-site.sh).
+// SERVER_INFO and TOOLS are a verbatim copy of the published surfaces and must be
+// regenerated alongside them. The deploy pipeline preserves this file the same way
+// it preserves _headers (ops/deploy-site.sh).
 
 // Derived from .well-known/agent-card.json (name, version).
 const SERVER_INFO = {
@@ -312,12 +310,12 @@ function rpcError(id, code, message, data) {
 
 function handle(msg) {
   const { id, method, params } = msg;
-
   switch (method) {
     case "initialize": {
-      const requested = params && typeof params.protocolVersion === "string"
-        ? params.protocolVersion
-        : DEFAULT_PROTOCOL_VERSION;
+      const requested =
+        params && typeof params.protocolVersion === "string"
+          ? params.protocolVersion
+          : DEFAULT_PROTOCOL_VERSION;
       return rpcResult(id, {
         protocolVersion: requested,
         capabilities: { tools: {} },
@@ -344,35 +342,34 @@ function handle(msg) {
   }
 }
 
-async function handlePost(request) {
+async function handleMcpPost(request) {
   let body;
   try {
     body = await request.json();
   } catch {
     return rpcError(null, -32700, "Parse error");
   }
-
   // JSON-RPC batching was removed in MCP 2025-06-18; accept a single message.
   if (Array.isArray(body)) {
     return rpcError(null, -32600, "Invalid Request: batch is not supported");
   }
-  if (!body || typeof body !== "object" || body.jsonrpc !== "2.0" || typeof body.method !== "string") {
+  if (
+    !body ||
+    typeof body !== "object" ||
+    body.jsonrpc !== "2.0" ||
+    typeof body.method !== "string"
+  ) {
     return rpcError(body && body.id, -32600, "Invalid Request");
   }
-
   // Notifications (no id) get no response body, only a 202 ack.
   if (body.id === undefined || body.id === null) {
     return new Response(null, { status: 202, headers: JSON_HEADERS });
   }
-
   return handle(body);
 }
 
-// Single dispatcher so Cloudflare Pages routing is unambiguous. The endpoint is
-// POST-only; it offers no server-initiated SSE stream on GET.
-export function onRequest(context) {
-  const { request } = context;
-  if (request.method === "POST") return handlePost(request);
+function handleMcp(request) {
+  if (request.method === "POST") return handleMcpPost(request);
   if (request.method === "OPTIONS") {
     return new Response(null, { status: 204, headers: JSON_HEADERS });
   }
@@ -385,3 +382,44 @@ export function onRequest(context) {
     { status: 405, headers: { ...JSON_HEADERS, Allow: "POST, OPTIONS" } },
   );
 }
+
+// Re-apply public/_headers to a static asset response. Advanced mode does not run
+// the _headers file for env.ASSETS responses, so the rules are restated here to
+// match it exactly: the llms-txt Link relation and X-Robots-Tag on every path, and
+// the per-path cache lifetimes. Headers are set (replaced), so this is idempotent.
+function applyStaticHeaders(pathname, res) {
+  const headers = new Headers(res.headers);
+  headers.set(
+    "Link",
+    '<https://agenticsubstrate.org/llms.txt>; rel="llms-txt"; type="text/plain"',
+  );
+  headers.set("X-Robots-Tag", "all");
+  if (pathname === "/llms.txt" || pathname.startsWith("/.well-known/")) {
+    headers.set("Cache-Control", "public, max-age=300");
+  } else if (pathname === "/status.json") {
+    headers.set("Cache-Control", "public, max-age=60");
+  }
+  return new Response(res.body, {
+    status: res.status,
+    statusText: res.statusText,
+    headers,
+  });
+}
+
+export default {
+  async fetch(request, env) {
+    const url = new URL(request.url);
+    if (url.pathname === "/mcp") {
+      return handleMcp(request);
+    }
+    // Everything else is a static asset. Serve it and restate the _headers rules.
+    // Guard defensively: on any failure, fall back to the raw asset response so a
+    // bug in the header pass never takes a surface down.
+    const assetResponse = await env.ASSETS.fetch(request);
+    try {
+      return applyStaticHeaders(url.pathname, assetResponse);
+    } catch {
+      return assetResponse;
+    }
+  },
+};
