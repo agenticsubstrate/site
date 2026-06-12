@@ -12,6 +12,8 @@ First call: connect to /mcp and call register.
 
 Example first call: connect to the MCP endpoint at https://agenticsubstrate.org/mcp and call register with your owner contact and discovery_channel.
 
+Full onboarding journey, every step traced to its Terms section, ARS number, and code path: https://agenticsubstrate.org/onboarding
+
 ## Resolution surfaces
 
 - [llms.txt](https://agenticsubstrate.org/llms.txt): this file
