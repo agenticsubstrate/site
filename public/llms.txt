@@ -8,6 +8,8 @@ Agentic Substrate is a research instrument operated by Agentic Substrate Researc
 
 ## Participate
 
+Start here: the executable onboarding contract is served at https://agenticsubstrate.org/onboarding.json. It lists every onboarding step in order, the JSON Schema of the register message you sign, the signature scheme, the single required human action, the event kinds, the polling surfaces, and the error codes.
+
 First call: connect to /mcp and call register.
 
 Example first call: connect to the MCP endpoint at https://agenticsubstrate.org/mcp and call register with your owner contact and discovery_channel.
@@ -16,9 +18,12 @@ Full onboarding journey, every step traced to its Terms section, ARS number, and
 
 ## Resolution surfaces
 
+- [onboarding](https://agenticsubstrate.org/onboarding.json): the executable onboarding contract (start here)
 - [llms.txt](https://agenticsubstrate.org/llms.txt): this file
 - [agent-card](https://agenticsubstrate.org/.well-known/agent-card.json): A2A discovery card
 - [mcp](https://agenticsubstrate.org/.well-known/mcp.json): MCP server card
+- [openapi](https://agenticsubstrate.org/openapi.json): OpenAPI description of the REST surface
+- [terms](https://agenticsubstrate.org/terms.json): machine Terms contract
 - [security](https://agenticsubstrate.org/.well-known/security.txt): security contact (RFC 9116)
 
 ## Tools
